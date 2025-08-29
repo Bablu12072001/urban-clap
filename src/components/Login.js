@@ -3,7 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { loginUser, isAuthenticated, getRole } from "../utils/auth";
-import LoginImage from "../assets/images/login_image.jpg";
+import LoginImage from "../assets/images/login img.jpeg";
+import Logo from "../assets/images/logo.jpeg";  // ✅ Import logo
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,76 +13,71 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Check if the user is already logged in and redirect
   useEffect(() => {
     if (isAuthenticated()) {
       const role = getRole();
       if (role === "admin") {
-        navigate("/admin-dashboard"); // Redirect to admin dashboard
+        navigate("/admin-dashboard");
       } else if (role === "site_engineer") {
-        navigate("/user-dashboard"); // Redirect to user dashboard
+        navigate("/user-dashboard");
       }
     }
   }, [navigate]);
 
-  // Handle form submission
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent page reload
-    setError(""); // Clear previous error
+    e.preventDefault();
+    setError("");
 
     try {
-      // Send login API request with role in lowercase
       const response = await axios.post(
         "https://3jck9ew4jh.execute-api.ap-south-1.amazonaws.com/IOCL/iocl_login",
         {
           email,
           password,
-          role: role.toLowerCase(), // Pass role in lowercase
+          role: role.toLowerCase(),
         }
       );
 
-      // Log the response data
       const token = response.data["body-json"]["body"]["token"];
 
       if (token) {
-        // Decode the JWT token to access user details (e.g., role)
         const decodedToken = jwtDecode(token);
-        console.log(decodedToken["role"]); // Debugging purpose
-
-        // Store user data and token in localStorage (for session persistence)
         loginUser({ token, ...decodedToken });
 
-        // Redirect based on role (extracted from the decoded token)
         if (decodedToken["role"] === "admin") {
-          navigate("/admin-dashboard"); // Redirect to admin dashboard
+          navigate("/admin-dashboard");
         } else {
-          navigate("/user-dashboard"); // Redirect to user dashboard
+          navigate("/user-dashboard");
         }
       } else {
         setError("Invalid login credentials");
       }
     } catch (err) {
-      // Handle error if the request fails
       setError("Failed to login. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
-      {/* Left Section - Image */}
-      <div className="lg:w-2/3 bg-blue-600 flex items-center justify-center">
-        <img
-          src={LoginImage}
-          alt="Login Illustration"
-          className="w-full h-full object-cover"
-        />
-      </div>
+    <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row relative">
 
-      {/* Right Section - Login Form */}
-      <div className="lg:w-1/3 p-8 flex items-center justify-center">
-        <div className="p-2 md:p-8 w-full max-w-md">
-          Sign in to your account
-          <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6"></h2>
+
+
+      <div className="lg:w-1/2 p-8 flex items-center justify-center">
+        <div className="p-2 md:p-8 w-full max-w-md ">
+          <div className="flex justify-center mb-6">
+            <img
+              src={Logo}
+              alt="Logo"
+              className=" object-cover rounded-full shadow-lg"
+              style={{ height: '8.25rem', width: '8.25rem' }}
+            />
+          </div>
+          <h2 className="text-2xl font-semibold text-blue-800 mb-2">
+            Welcome back...
+          </h2>
+          <p className="mb-7 text-gray-600">
+            Please enter your email, password and select role
+          </p>
           <form onSubmit={handleLogin}>
             <div className="mb-4">
               <label className="block text-gray-600 font-medium">Email:</label>
@@ -91,32 +87,34 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="w-full p-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 mt-1 border border-gray-300 rounded-md shadow-sm 
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent 
+                           shadow-md"
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-600 font-medium">
-                Password:
-              </label>
+              <label className="block text-gray-600 font-medium">Password:</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
-                className="w-full p-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 mt-1 border border-gray-300 rounded-md shadow-sm 
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent 
+                           shadow-md"
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-600 font-medium">
-                Select Role:
-              </label>
+              <label className="block text-gray-600 font-medium">Select Role:</label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full p-3 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 mt-1 border border-gray-300 rounded-md shadow-sm 
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent 
+                           shadow-md"
               >
                 <option value="site_engineer">User</option>
                 <option value="admin">Admin</option>
@@ -127,12 +125,24 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              className="w-full py-3 text-white font-semibold rounded-md shadow-lg 
+                         bg-gradient-to-r from-blue-500 to-indigo-600 
+                         hover:from-blue-600 hover:to-indigo-700 
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
               Login
             </button>
           </form>
         </div>
+      </div>
+
+      {/* Right Section (Image) */}
+      <div className="lg:w-1/2 flex items-center justify-center p-4">
+        <img
+          src={LoginImage}
+          alt="Login Illustration"
+          className="max-h-[500px] w-auto object-contain rounded-xl "
+        />
       </div>
     </div>
   );
